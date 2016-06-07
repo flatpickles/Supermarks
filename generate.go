@@ -30,7 +30,8 @@ func getChromeJSON() string {
 
 // Transform bookmark JSON into a PageData struct
 func pageDataFromJSON(JSON string) PageData {
-  root := BookmarkNode{"Test", "http://www.man1.biz", time.Now(), []BookmarkNode{}}
+  notRoot := BookmarkNode{"Test", "http://www.man1.biz", time.Now(), []BookmarkNode{}}
+  root := BookmarkNode{"Test", "http://www.man1.biz", time.Now(), []BookmarkNode{notRoot}}
   return PageData{[]BookmarkNode{root}, time.Now()}
 }
 

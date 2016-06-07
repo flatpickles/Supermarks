@@ -23,9 +23,14 @@
 <!-- Bookmark Node Template -->
 
 {{ define "bookmark_node" }}
-
-<!-- TODO: render bookmark OR folder w/ children (recursive templating) -->
-
-<li><a href="{{ .URL }}">{{ .Title }}</a></li>
-
+{{ if eq 0 (len .Children) }}
+  <li><a href="{{ .URL }}">{{ .Title }}</a></li>
+{{ else }}
+  <li>{{ .Title }}</li>
+  <ul>
+    {{ range .Children }}
+      {{ template "bookmark_node" . }}
+    {{ end }}
+  </ul>
+{{ end }}
 {{ end }}
