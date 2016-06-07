@@ -4,35 +4,52 @@ import (
   "html/template"
   "os"
   "time"
+  "encoding/json"
+  "io/ioutil"
 )
 
 const TemplateFile = "templates.html"
 const PrimaryTemplateName = "main"
 const OutputFile = "index.html"
+const ChromeBookmarksLocation = "/Users/matt/Library/Application Support/Google/Chrome/Default/Bookmarks"
 
-// Struct to represent data injected into template.html
 type PageData struct {
   RootNodes []BookmarkNode
   Updated time.Time
 }
 
 type BookmarkNode struct {
-  Title string
-  URL string
-  Updated time.Time
+  Title, URL string
   Children []BookmarkNode
 }
 
+type JSON map[string]interface{}
+
 // Retrieve JSON for desired bookmarks from the filesystem
-func getChromeJSON() string {
-  return "TODO"
+func getChromeJSON() JSON {
+  bookmarksFile, readError := ioutil.ReadFile(ChromeBookmarksLocation)
+  check(readError)
+  var bookmarksJSON JSON
+  unmarshalError := json.Unmarshal(bookmarksFile, &bookmarksJSON)
+  check(unmarshalError)
+  return bookmarksJSON
 }
 
 // Transform bookmark JSON into a PageData struct
-func pageDataFromJSON(JSON string) PageData {
-  notRoot := BookmarkNode{"Test", "http://www.man1.biz", time.Now(), []BookmarkNode{}}
-  root := BookmarkNode{"Test", "http://www.man1.biz", time.Now(), []BookmarkNode{notRoot}}
-  return PageData{[]BookmarkNode{root}, time.Now()}
+func pageDataFromJSON(data JSON) PageData {
+  nodes := []BookmarkNode{}
+  for k, v := range data {
+    if k == "roots" {
+      typeAsserted := v.(map[string]interface{})
+      nodeJSON := JSON(typeAsserted)
+      nodes = bookmarkNodesFromJSON(nodeJSON)
+    }
+  }
+  return PageData{nodes, time.Now()}
+}
+
+func bookmarkNodesFromJSON(data JSON) []BookmarkNode {
+  return []BookmarkNode{BookmarkNode{"TEST", "nah", []BookmarkNode{}}}
 }
 
 // Write out a file generated from template.html using the provided PageData
