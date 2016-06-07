@@ -1,0 +1,31 @@
+<!-- Main Page Template -->
+
+{{ define "main" }}
+
+<html>
+  <head>
+    <title>Work in progress</title>
+  </head>
+
+  <body>
+    <ul>
+      {{ range .RootNodes }}
+        {{ template "bookmark_node" . }}
+      {{ end }}
+    </ul>
+
+    Last updated at {{.Updated}}
+  </body>
+</html>
+
+{{ end }}
+
+<!-- Bookmark Node Template -->
+
+{{ define "bookmark_node" }}
+
+<!-- TODO: render bookmark OR folder w/ children (recursive templating) -->
+
+<li><a href="{{ .URL }}">{{ .Title }}</a></li>
+
+{{ end }}
