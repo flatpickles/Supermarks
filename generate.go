@@ -24,6 +24,7 @@ type BookmarkNode struct {
 }
 
 type JSON map[string]interface{}
+type JSONArr []interface{}
 
 // Retrieve JSON for desired bookmarks from the filesystem
 func getChromeJSON() JSON {
@@ -37,19 +38,40 @@ func getChromeJSON() JSON {
 
 // Transform bookmark JSON into a PageData struct
 func pageDataFromJSON(data JSON) PageData {
-  nodes := []BookmarkNode{}
-  for k, v := range data {
-    if k == "roots" {
-      typeAsserted := v.(map[string]interface{})
-      nodeJSON := JSON(typeAsserted)
-      nodes = bookmarkNodesFromJSON(nodeJSON)
-    }
-  }
+  nodes := bookmarkNodesFromJSON(data)
   return PageData{nodes, time.Now()}
 }
 
 func bookmarkNodesFromJSON(data JSON) []BookmarkNode {
-  return []BookmarkNode{BookmarkNode{"TEST", "nah", []BookmarkNode{}}}
+  var name string
+  var URL string
+  children := []BookmarkNode{}
+  for key, val := range data {
+    switch key {
+    case "roots", "bookmark_bar":
+      valJSON, isJSON := val.(map[string]interface{})
+      if isJSON {
+        return bookmarkNodesFromJSON(JSON(valJSON))
+      }
+    case "name":
+      name = val.(string)
+    case "url":
+      URL = val.(string)
+    case "children":
+      valJSONArr, isJSONArr := val.([]interface{})
+      if isJSONArr {
+        nodeArr := JSONArr(valJSONArr)
+        for i := range nodeArr {
+          node := nodeArr[i]
+          nodeJSON, isJSON := node.(map[string]interface{})
+          if isJSON {
+            children = append(children, bookmarkNodesFromJSON(JSON(nodeJSON))...)
+          }
+        }
+      }
+    }
+  }
+  return []BookmarkNode{BookmarkNode{name, URL, children}}
 }
 
 // Write out a file generated from template.html using the provided PageData
