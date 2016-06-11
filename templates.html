@@ -4,7 +4,7 @@
 
 <html>
   <head>
-    <title>Work in progress</title>
+    <title>Supermarks</title>
   </head>
 
   <body>
@@ -23,7 +23,7 @@
 <!-- Bookmark Node Template -->
 
 {{ define "bookmark_node" }}
-{{ if eq 0 (len .Children) }}
+{{ if and (eq 0 (len .Children)) (gt (len .URL) 0) }}
   <li><a href="{{ .URL }}">{{ .Title }}</a></li>
 {{ else }}
   <li>{{ .Title }}</li>
