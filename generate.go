@@ -2,6 +2,7 @@ package main
 
 import (
   "encoding/json"
+  "flag"
   "html/template"
   "io/ioutil"
   "log"
@@ -9,13 +10,23 @@ import (
   "time"
 )
 
-// MARK: Default config values
+// MARK: Constants for later use
 
-const ChromeBookmarksFile = "/Users/matt/Library/Application Support/Google/Chrome/Default/Bookmarks"
 const PrimaryTemplateName = "main"
-const OutputFile = "index.html"
-const RootFolderName = "Make Stuff"
 const TemplateFile = "templates.html"
+
+// MARK: Config defaults and global state
+
+const DefaultChromeBookmarksFile = "/Users/matt/Library/Application Support/Google/Chrome/Default/Bookmarks"
+const DefaultOutputFile = "index.html"
+const DefaultRootFolderName = "Bookmarks Bar"
+
+var GlobalConfig Config
+type Config struct {
+  ChromeBookmarksFile string
+  OutputFile string
+  RootFolderName string
+}
 
 // MARK: Structs to represent page & bookmark data
 
@@ -38,7 +49,7 @@ type JSONArr []interface{}
 
 // Retrieve JSON for desired bookmarks from the filesystem
 func getChromeJSON() JSON {
-  bookmarksFile, readError := ioutil.ReadFile(ChromeBookmarksFile)
+  bookmarksFile, readError := ioutil.ReadFile(GlobalConfig.ChromeBookmarksFile)
   check(readError)
   var bookmarksJSON JSON
   unmarshalError := json.Unmarshal(bookmarksFile, &bookmarksJSON)
@@ -48,7 +59,7 @@ func getChromeJSON() JSON {
 
 // Transform bookmark JSON into a PageData struct
 func pageDataFromJSON(data JSON) PageData {
-  nodes := bookmarkNodesFromJSON(data, RootFolderName, false)
+  nodes := bookmarkNodesFromJSON(data, GlobalConfig.RootFolderName, false)
   return PageData{nodes, time.Now()}
 }
 
@@ -123,7 +134,7 @@ func generatePage(pageContents PageData) {
   pageTemplate, templateCreationError := template.ParseFiles(TemplateFile)
   check(templateCreationError)
   // Write out the templated HTML
-  file, fileError := os.Create(OutputFile)
+  file, fileError := os.Create(GlobalConfig.OutputFile)
   check(fileError)
   defer file.Close()
   templateUseErr := pageTemplate.ExecuteTemplate(file, PrimaryTemplateName, pageContents)
@@ -140,6 +151,14 @@ func check(err error) {
 // MARK: Main
 
 func main() {
+  // Parse flags into GlobalConfig
+  bookmarksFilePtr := flag.String("bookmarks", DefaultChromeBookmarksFile, "Path to Chrome's bookmarks file")
+  outputFilePtr := flag.String("pagename", DefaultOutputFile, "Name for output file, e.g. 'bookmarks.html'")
+  rootFolderPtr := flag.String("root", DefaultRootFolderName, "Name of the root bookmark folder to parse")
+  flag.Parse()
+  GlobalConfig = Config{*bookmarksFilePtr, *outputFilePtr, *rootFolderPtr}
+
+  // Generate the page
   bookmarks := getChromeJSON()
   pd := pageDataFromJSON(bookmarks)
   generatePage(pd)
