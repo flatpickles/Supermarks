@@ -4,6 +4,7 @@ source supermarks.cfg
 
 if ! type "fswatch" > /dev/null; then
   echo "Please install fswatch: https://github.com/emcrisostomo/fswatch"
+  exit
 fi
 
 echo "Watching for changes in $chrome_bookmarks_path"
