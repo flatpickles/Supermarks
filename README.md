@@ -1,6 +1,6 @@
 # Supermarks
 
-The goal of this project is to allow you to easily publish the contents of a subfolder within your chrome bookmarks. The `supermarks.go` program parses Chrome's bookmark JSON format into a templated HTML page, and I've written a couple shell scripts to assist with watching Chrome's bookmark file for changes, and uploading the HTML file to your destination of choice after generation.
+The goal of this project is to allow you to easily publish the contents of a subfolder within your Chrome bookmarks. The `supermarks.go` program parses Chrome's bookmark JSON format into a templated HTML page, and I've written a couple shell scripts to assist with watching Chrome's bookmark file for changes, and uploading the HTML file to your destination of choice after generation.
 
 To use this:
 - Checkout this repo, if you haven't already.
