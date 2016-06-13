@@ -1,0 +1,48 @@
+<!-- Main Page Template -->
+
+{{ define "main" }}
+
+<html>
+  <head>
+    <title>Supermarks</title>
+    <link rel="stylesheet" type="text/css" href="resources/reset.css" />
+    <link rel="stylesheet" type="text/css" href="resources/styles.css" />
+  </head>
+
+  <body>
+
+    <h1>Supermarks</h1>
+
+    <p>
+      Did you know that more frozen bananas are sold right here on this boardwalk than anywhere in the OC? Fried cheese... with club sauce. Popcorn shrimp... with club sauce. Chicken fingers... with spicy club sauce. Sweet old thing. Only two of those words describe Mom, so I know you're lying to me. She keeps saying that God is going to show me a sign. The... something of my ways. What, so the guy we are meeting with can't even grow his own hair? COME ON!
+    </p>
+
+    <ul>
+      {{ range .RootNodes }}
+        {{ template "bookmark_node" . }}
+      {{ end }}
+    </ul>
+
+    <p class="footer">
+      Last updated at {{.Updated}} <br />
+      Generated with <a href="https://github.com/man1/Supermarks">Supermarks</a>
+    </p>
+  </body>
+</html>
+
+{{ end }}
+
+<!-- Bookmark Node Template -->
+
+{{ define "bookmark_node" }}
+{{ if and (eq 0 (len .Children)) (gt (len .URL) 0) }}
+  <li><a href="{{ .URL }}">{{ .Title }}</a></li>
+{{ else }}
+  <li>{{ .Title }}</li>
+  <ul>
+    {{ range .Children }}
+      {{ template "bookmark_node" . }}
+    {{ end }}
+  </ul>
+{{ end }}
+{{ end }}

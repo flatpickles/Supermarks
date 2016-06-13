@@ -1,0 +1,24 @@
+body {
+    margin: 50pt auto;
+    width:400px;
+}
+
+h1 {
+  font-size: 20pt;
+  font-weight: bold;
+}
+
+p {
+  margin: 5pt 0pt;
+}
+
+p.footer {
+  text-align: center;
+}
+
+ul {
+  list-style-image: "folder.png";
+  list-style-position: inside;
+  list-style-type: circle;
+  padding-left: 5pt;
+}

@@ -13,7 +13,7 @@ import (
 // MARK: Constants
 
 const PrimaryTemplateName = "main"
-const TemplateFile = "templates.html"
+const TemplateFile = "resources/templates.html"
 
 // MARK: Config defaults and global state
 
