@@ -36,9 +36,9 @@
 
 {{ define "bookmark_node" }}
 {{ if and (eq 0 (len .Children)) (gt (len .URL) 0) }}
-  <li><a href="{{ .URL }}">{{ .Title }}</a></li>
+  <li class="bookmark" style="background: url(http://www.google.com/s2/favicons?domain={{ .URL }}) no-repeat; background-size: 1em; background-position: left center;"><a href="{{ .URL }}">{{ .Title }}</a></li>
 {{ else }}
-  <li>{{ .Title }}</li>
+  <li class="folder">{{ .Title }}</li>
   <ul>
     {{ range .Children }}
       {{ template "bookmark_node" . }}
