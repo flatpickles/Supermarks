@@ -13,6 +13,7 @@ echo "Generating HTML page..."
 if [ ! -z "$scp_destination" ]; then
   echo "Uploading..."
   scp $output_file_name $scp_destination
+  scp -r resources $scp_destination
 else
   echo "Upload disabled."
 fi
